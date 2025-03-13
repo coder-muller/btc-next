@@ -14,10 +14,50 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        String      @id @default(uuid())
   name      String
-  email     String   @unique
+  email     String      @unique
   password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  plan      TxPlan      @default(FREE)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  portfolio Portfolio[]
+}
+
+enum TxPlan {
+  FREE
+  PRO
+}
+
+model Portfolio {
+  id           String        @id @default(uuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+  cryptoId     String // ID da criptomoeda (ex: "bitcoin", "ethereum")
+  symbol       String // Símbolo da criptomoeda (ex: "BTC", "ETH")
+  name         String // Nome da criptomoeda
+  quantity     Float // Quantidade total atual
+  transactions Transaction[] // Relacionamento com as transações
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@unique([userId, cryptoId])
+}
+
+model Transaction {
+  id          String    @id @default(uuid())
+  portfolioId String
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id])
+  type        TxType // Tipo da transação (COMPRA/VENDA)
+  quantity    Float // Quantidade comprada ou vendida
+  price       Float // Preço unitário na transação
+  totalAmount Float // Valor total da transação (quantidade * preço)
+  date        DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum TxType {
+  COMPRA
+  VENDA
 }
