@@ -11,15 +11,15 @@ async function verifyToken(token: string) {
       token,
       new TextEncoder().encode(process.env.JWT_SECRET || "secret")
     );
-    
+
     // Aceitar tanto payload.userId quanto payload.id
     const userId = payload.userId || payload.id;
-    
+
     if (!userId) {
       console.error('Token sem userId ou id válido:', payload);
       return null;
     }
-    
+
     return userId as string;
   } catch (error) {
     console.error('Erro ao verificar token:', error);
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     // Calcular a nova quantidade baseada no tipo de transação
     const quantityChange = type === 'COMPRA' ? quantity : -quantity;
-    
+
     if (!portfolio) {
       // Se não existir um portfólio, criamos um novo (apenas para compras)
       if (type === 'VENDA') {
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
     } else {
       // Atualizar quantidade no portfólio existente
       const newQuantity = portfolio.quantity + quantityChange;
-      
+
       // Verificar se há quantidade suficiente para venda
       if (newQuantity < 0) {
         return NextResponse.json(
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
-      
+
       await prisma.portfolio.update({
         where: { id: portfolio.id },
         data: { quantity: newQuantity }
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: 'Transação registrada com sucesso',
       transaction,
       portfolio: {
@@ -162,4 +162,6 @@ export async function GET(request: NextRequest) {
     console.error('Erro ao buscar transações:', error);
     return NextResponse.json({ error: 'Erro ao buscar transações' }, { status: 500 });
   }
-} 
+}
+
+

@@ -12,7 +12,7 @@ export interface PortfolioAsset {
     price: number;
     change24h: number;
     volume: string;
-    image?: string;
+    image: string;
   }
   
   // Adicionando uma interface para o item da API do CoinGecko
@@ -29,12 +29,12 @@ export interface PortfolioAsset {
   // Interface para as transações reais do banco de dados
   export interface DbTransaction {
     id: string;
-    type: string;
+    portfolioId: string;
+    type: "COMPRA" | "VENDA";
     quantity: number;
     price: number;
     totalAmount: number;
     date: string;
-    portfolioId: string;
   }
   
   // Interface para transações formatadas para exibição
@@ -45,9 +45,9 @@ export interface PortfolioAsset {
   
   export interface DbPortfolio {
     id: string;
-    cryptoId: string;
-    symbol: string;
+    userId: string;
     name: string;
+    symbol: string;
     quantity: number;
     transactions: DbTransaction[];
   }
